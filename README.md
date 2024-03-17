@@ -80,4 +80,4 @@ dbntoy tree 文件库序号 >> output.txt
 
 # 联系我
 
-个人邮箱: haotu007@gmai.com
+个人邮箱: haotu007@gmail.com
