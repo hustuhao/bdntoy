@@ -36,7 +36,7 @@ func NewLoginCommand() []cli.Command {
 					Destination: &LoginConfig.bduss,
 				},
 				cli.StringFlag{
-					Name:        "gcess",
+					Name:        "stoken",
 					Usage:       "bdn Cookie",
 					Destination: &LoginConfig.stoken,
 				},
