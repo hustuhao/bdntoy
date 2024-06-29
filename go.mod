@@ -3,10 +3,12 @@ module turato.com/bdntoy
 go 1.21
 
 require (
+	github.com/goccy/go-json v0.10.3
 	github.com/hashicorp/go-retryablehttp v0.7.5
 	github.com/json-iterator/go v1.1.12
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/urfave/cli v1.22.14
+	golang.org/x/sys v0.21.0
 )
 
 require (

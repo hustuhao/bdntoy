@@ -15,7 +15,8 @@ type BdnInfo struct {
 	Gids  []string `json:"gid_list"`
 	FsIds []string `json:"fsid_list"`
 
-	Gid string `json:"gid"`
+	Gid   string `json:"gid"`
+	MsgId string `json:"msg_id"`
 }
 
 type User struct {
@@ -101,7 +102,7 @@ func cookieHeader(rawCookies string) []*http.Cookie {
 	return req.Cookies()
 }
 
-//SetGidList 缓存gid列表
+//SetGid 缓存gid
 func (c *ConfigsData) SetGid(gid string) {
 	c.BdnInfo.Gid = gid
 	return
@@ -121,6 +122,15 @@ func (c *ConfigsData) SetGidList(gidList []string) {
 func (c *ConfigsData) SetFsIdList(fsIdList []string) {
 	c.BdnInfo.FsIds = fsIdList
 	return
+}
+
+func (c *ConfigsData) GetMsgId() string {
+	return c.BdnInfo.MsgId
+}
+
+//SetMsgId 缓存msgId
+func (c *ConfigsData) SetMsgId(msgId string) {
+	c.BdnInfo.MsgId = msgId
 }
 
 //ActiveService user service

@@ -26,7 +26,7 @@ func main() {
 	app := cmds.NewApp()
 	app.Commands = []cli.Command{}
 	app.Commands = append(app.Commands, cmds.NewLoginCommand()...)
-	app.Commands = append(app.Commands, cmds.NewSessionCommand()...)
+	app.Commands = append(app.Commands, cmds.NewBdCommand()...)
 
 	app.Action = cmds.DefaultAction
 

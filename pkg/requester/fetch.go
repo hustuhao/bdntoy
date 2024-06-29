@@ -3,7 +3,6 @@ package requester
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -12,6 +11,8 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/goccy/go-json"
 
 	jsoniter "github.com/json-iterator/go"
 )

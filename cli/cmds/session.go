@@ -14,16 +14,24 @@ import (
 	"turato.com/bdntoy/service"
 )
 
-//NewSessionCommand login command
-func NewSessionCommand() []cli.Command {
+//NewBdCommand login command
+func NewBdCommand() []cli.Command {
 	return []cli.Command{
 		{
 			Name:      "hs",
-			Usage:     "获取历史会话列表",
-			UsageText: appName + " session",
+			Usage:     "获取会话列表",
+			UsageText: appName + " hs [number]",
 			Action:    sessionAction,
 			Before:    authorizationFunc,
-			//After:     configSaveFunc,
+			After:     configSaveFunc,
+		},
+		{
+			Name:      "gs",
+			Usage:     "获取分享群组",
+			UsageText: appName + " gs [number]",
+			Action:    groupAction,
+			Before:    authorizationFunc,
+			After:     configSaveFunc,
 		},
 		{
 			Name:      "fl",
@@ -45,45 +53,62 @@ func NewSessionCommand() []cli.Command {
 
 func sessionAction(c *cli.Context) error {
 	sessions, err := application.Sessions()
-
 	if err != nil {
 		return err
 	}
+	// 如果输入了参数index
+	if c.NArg() > 0 {
+		index, err := strconv.Atoi(c.Args().Get(0))
+		if err != nil {
+			return errors.New("请输入正确的序号")
+		}
+		if index > len(sessions)-1 {
 
-	//gids := make([]string, 0, len(sessions))
-	//for i := range sessions {
-	//	gids = append(gids, sessions[i].Gid)
-	//}
-	//config.Instance.SetGidList(gids)
+			return errors.New("请输入正确的序号")
+		}
+		session := sessions[index]
+		config.Instance.SetGid(session.Gid)
+		return fileLibraryAction(c)
+	}
+
 	renderSessions(sessions)
 	return nil
 }
 
+func groupAction(c *cli.Context) error {
+	groups, err := application.ShareGroups()
+	if err != nil {
+		return err
+	}
+	// 如果输入了参数index
+	if c.NArg() > 0 {
+		index, err := strconv.Atoi(c.Args().Get(0))
+		if err != nil {
+			return errors.New("请输入正确的序号")
+		}
+		if index > len(groups)-1 {
+			return errors.New("请输入正确的序号")
+		}
+		group := groups[index]
+		config.Instance.SetGid(group.Gid)
+		return fileLibraryAction(c)
+	}
+
+	renderGroups(groups)
+	return nil
+}
+
 func fileLibraryAction(c *cli.Context) error {
-	args := c.Parent().Args()
-	sessionIndex, err := strconv.Atoi(args.Get(1))
-	if err != nil {
-		cli.ShowCommandHelp(c, "fl")
-		return errors.New("请输入会话ID")
+	gid := config.Instance.GetGid()
+	if gid == "" {
+		return errors.New("请先选择群组或会话")
 	}
 
-	records, err := application.Sessions()
+	rsp, err := application.FileLibraries(gid)
 	if err != nil {
 		return err
 	}
-	if sessionIndex > len(records)-1 {
-		return errors.New("请输入正确的序号")
-	}
-
-	rsp, err := application.FileLibraries(records[sessionIndex].Gid)
-	if err != nil {
-		return err
-	}
-
-	application.Sessions()
-	config.Instance.SetGid(records[sessionIndex].Gid)
 	renderFileLibrary(rsp.Records.MsgList)
-
 	return nil
 }
 
@@ -107,7 +132,7 @@ func filesAction(c *cli.Context) error {
 			FromUk: r.Uk,
 			ToUk:   r.Uk,
 			MsgId:  r.MsgId,
-			Num:    1000,
+			Num:    999999,
 			Page:   0,
 			FsId:   r.FileList[i].FsId,
 			Gid:    config.GetGid(),
@@ -136,14 +161,29 @@ func renderSessions(sessions []*service.BdHistorySessionRecord) {
 	table.Render()
 }
 
+func renderGroups(groups []*service.ShareGroupInfo) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"#", "群名", "创建者", "创建时间"})
+	table.SetAutoWrapText(false)
+
+	for i, v := range groups {
+		table.Append([]string{strconv.Itoa(i), v.Name, v.Uname, time.Unix(v.Ctime, 0).Format("2006-01-02 15:04:05")})
+	}
+	table.Render()
+}
+
 func renderFileLibrary(list []*service.ShareGroupFileMsg) {
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"#", "文件库名称", "内容", "创建时间"})
+	table.SetHeader([]string{"#", "文件库名称", "分享者", "创建时间"})
 	table.SetAutoWrapText(false)
 
 	for i, v := range list {
 		msgCTime, _ := strconv.ParseInt(v.MsgCtime, 10, 64)
-		table.Append([]string{strconv.Itoa(i), v.Uname, v.MsgContent, time.UnixMilli(msgCTime).Format("2006-01-02 15:04:05")})
+		var fileName string
+		if len(v.FileList) > 0 {
+			fileName = v.FileList[0].ServerFilename
+		}
+		table.Append([]string{strconv.Itoa(i), fileName, v.Uname, time.UnixMilli(msgCTime).Format("2006-01-02 15:04:05")})
 	}
 	table.Render()
 }

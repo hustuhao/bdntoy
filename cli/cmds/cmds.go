@@ -69,7 +69,7 @@ func DefaultAction(c *cli.Context) error {
 		return nil
 	}
 
-	sc := &NewSessionCommand()[0]
+	sc := &NewBdCommand()[0]
 	if sc != nil {
 		return sc.Run(c)
 	}

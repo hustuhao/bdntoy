@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_NAME="bdntoy"
-VERSION=v0.0.2
+VERSION=v0.0.3
 RELEASE_NAME="${PROJECT_NAME}"-"${VERSION}"
 RELEASE_BODY="Release version ${VERSION}"
 OUTPUT_DIR="bin" # 打包目录

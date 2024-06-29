@@ -1,11 +1,15 @@
 package config
 
 import (
-	"encoding/json"
+	"io"
+	"log"
 	"os"
+	"os/user"
 	"path/filepath"
 	"sync"
 	"unsafe"
+
+	"github.com/goccy/go-json"
 
 	"turato.com/bdntoy/service"
 )
@@ -111,7 +115,7 @@ func (c *ConfigsData) loadConfigFromFile() error {
 	c.fileMu.Lock()
 	defer c.fileMu.Unlock()
 
-	_, err = c.configFile.Seek(0, os.SEEK_SET)
+	_, err = c.configFile.Seek(0, io.SeekStart)
 	if err != nil {
 		return nil
 	}
@@ -157,23 +161,59 @@ func NewConfig(configFilePath string) *ConfigsData {
 	return c
 }
 
-//GetConfigDir 配置文件夹
+////GetConfigDir 配置文件夹
+//func GetConfigDir() string {
+//	configDir, ok := os.LookupEnv(EnvConfigDir)
+//	if ok {
+//		if filepath.IsAbs(configDir) {
+//			return configDir
+//		}
+//	}
+//
+//	home, ok := os.LookupEnv("HOME")
+//	if ok {
+//		return filepath.Join(home, ".config", "bdntoy")
+//	}
+//
+//	return filepath.Join("/tmp", "bdntoy")
+//}
+
 func GetConfigDir() string {
-	configDir, ok := os.LookupEnv(EnvConfigDir)
+	// Check if the user has set a custom config directory
+	configDir, ok := os.LookupEnv("CONFIG_DIR")
 	if ok {
 		if filepath.IsAbs(configDir) {
 			return configDir
 		}
 	}
 
-	home, ok := os.LookupEnv("HOME")
-	if ok {
+	home := getWindowsUserProfile()
+	if home != "" {
 		return filepath.Join(home, ".config", "bdntoy")
 	}
 
 	return filepath.Join("/tmp", "bdntoy")
 }
 
+// getWindowsUserProfile retrieves the Windows user profile path.
+func getWindowsUserProfile() string {
+
+	// 获取当前用户
+	currentUser, err := user.Current()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return currentUser.HomeDir
+}
+
 func GetGid() string {
 	return Instance.GetGid()
+}
+
+func GeMsgId() string {
+	return Instance.GetMsgId()
+}
+
+func SetMsgId(fsId string) {
+	Instance.SetMsgId(fsId)
 }

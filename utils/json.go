@@ -1,8 +1,9 @@
 package utils
 
 import (
-	"encoding/json"
 	"io"
+
+	"github.com/goccy/go-json"
 )
 
 //UnmarshalReader 将 r 中的 json 格式的数据, 解析到 v

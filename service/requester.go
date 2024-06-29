@@ -21,6 +21,12 @@ func (s *Service) requestHistorySessions() (io.ReadCloser, error) {
 	return handleHTTPResponse(res, err)
 }
 
+// requestShareGroups
+func (s *Service) requestShareGroups() (io.ReadCloser, error) {
+	res, err := s.client.Req("POST", "https://pan.baidu.com/mbox/group/list?clienttype=0&app_id=250528&web=1", nil, map[string]string{})
+	return handleHTTPResponse(res, err)
+}
+
 //获取分享群文件列表
 func (s *Service) requestShareGroupFileList(gid string) (io.ReadCloser, error) {
 	url := fmt.Sprintf(`https://pan.baidu.com/mbox/group/listshare`)

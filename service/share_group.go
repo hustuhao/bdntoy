@@ -1,8 +1,9 @@
 package service
 
 import (
-	"encoding/json"
 	"fmt"
+
+	"github.com/goccy/go-json"
 )
 
 type GetShareGroupFileListRsp struct {
@@ -85,6 +86,59 @@ type ShareGroupFile struct {
 	TkbindId       string   `json:"tkbind_id"`
 	Videotag       string   `json:"videotag"`
 	Wpfile         string   `json:"wpfile"`
+}
+
+type ListShareGroupRsp struct {
+	Errno     int               `json:"errno"`
+	RequestId int64             `json:"request_id"`
+	Count     int               `json:"count"`
+	Timestamp int               `json:"timestamp"`
+	Records   []*ShareGroupInfo `json:"records"`
+}
+
+type ShareGroupInfo struct {
+	Gid           string      `json:"gid"`
+	Gnum          string      `json:"gnum"`
+	Name          string      `json:"name"`
+	Gdesc         string      `json:"gdesc"`
+	Announce      string      `json:"announce"`
+	Type          string      `json:"type"`
+	Status        string      `json:"status"`
+	Ctime         int64       `json:"ctime"`
+	NameFlag      string      `json:"name_flag"`
+	Vip           string      `json:"vip"`
+	SpamCount     interface{} `json:"spam_count"`
+	InviteStatus  string      `json:"invite_status"`
+	SearchStatus  int         `json:"search_status"`
+	BanpostStatus string      `json:"banpost_status"`
+	CommonSwitch  string      `json:"common_switch"`
+	Photoinfo     []struct {
+		Uk    int64  `json:"uk"`
+		Uname string `json:"uname"`
+		Photo string `json:"photo"`
+	} `json:"photoinfo"`
+	Gtype       int    `json:"gtype"`
+	GroupStatus int    `json:"group_status"`
+	Uname       string `json:"uname"`
+	Uk          int64  `json:"uk"`
+	AvatarUrl   string `json:"avatar_url"`
+	GroupRemark string `json:"group_remark"`
+}
+
+func (s *Service) GetShareGroups() ([]*ShareGroupInfo, error) {
+	body, err := s.requestShareGroups()
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer body.Close()
+
+	rsp := new(ListShareGroupRsp)
+	if err := handleJSONParse(body, &rsp); err != nil {
+		return nil, err
+	}
+	return rsp.Records, nil
 }
 
 // GetShareGroupFileList 分享群文件列表
