@@ -22,10 +22,15 @@
 ```shell
 bdntoy login --cookies '你的cookie'
 ```
+
+> 如何获取 cookie? 请参考文献 [4]
+
 或者：
 ```shell
 bdntoy login --bduss 'asdasd' --stoken '12312as'
 ```
+
+> 如何获取登录凭证，请参考文献 [5]
 
 ### 获取会话列表
 
@@ -70,7 +75,7 @@ bdntoy gs 0
 ### 获取会话中的分享文件库
 
 ```shell
-dbntoy fl
+bdntoy fl
 ```
 
 ```text
@@ -84,7 +89,7 @@ dbntoy fl
 
 ### 打印文件库中的所有文件
 ```shell
-dbntoy tree 文件库序号
+bdntoy tree 文件库序号
 ```
 结果输出示例:
 ```text
@@ -99,13 +104,15 @@ dbntoy tree 文件库序号
 
 保存输出：
 ```shell
-dbntoy tree 文件库序号 >> output.txt
+bdntoy tree 文件库序号 >> output.txt
 ```
 
-# 参考仓库
+# 参考文献
 - [1] [Github仓库: 极客时间下载器](https://github.com/mmzou/geektime-dl)
 - [2] [Github仓库: youtube下载器](https://github.com/kkdai/youtube) 
 - [3] [百度网盘开放平台文档](https://pan.baidu.com/union/document/basic)
+- [4] [如何抓包获取百度网盘网页版完整 Cookie](https://blog.imwcr.cn/2022/11/24/%E5%A6%82%E4%BD%95%E6%8A%93%E5%8C%85%E8%8E%B7%E5%8F%96%E7%99%BE%E5%BA%A6%E7%BD%91%E7%9B%98%E7%BD%91%E9%A1%B5%E7%89%88%E5%AE%8C%E6%95%B4-cookie/)
+- [5] [使用cookie登录百度网盘账号](https://blog.csdn.net/weixin_39734304/article/details/102418180)
 
 # 联系我
 
